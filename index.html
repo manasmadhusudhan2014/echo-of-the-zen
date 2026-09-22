@@ -1,1 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JIN — The Kinetic Current</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
 
+<body>
+
+  <div id="hud">
+    <div class="topbar">
+      <div>
+        <b>JIN</b>
+        <span> SLUM STYLE</span>
+      </div>
+      <div id="objective">Train with Master Shen</div>
+    </div>
+
+    <div class="bars">
+      <div class="bar">
+        <span>HP</span>
+        <i id="hp"></i>
+      </div>
+
+      <div class="bar">
+        <span>STAMINA</span>
+        <i id="stamina"></i>
+      </div>
+
+      <div class="bar">
+        <span>KINETIC</span>
+        <i id="kinetic"></i>
+      </div>
+    </div>
+
+    <div id="combo">COMBO <b>0</b></div>
+
+    <div id="message">
+      WASD move • Mouse look • Space jump • F dodge • Z/X/C attack
+    </div>
+  </div>
+
+  <div id="controls">
+    <button id="lock">LOCK CAMERA</button>
+    <button id="lab">COMBO LAB</button>
+    <button id="save">SAVE</button>
+  </div>
+
+  <div id="labPanel" class="panel hidden">
+    <h2>🥋 COMBO LAB</h2>
+
+    <p>
+      Build a 3-hit custom combo.
+      Press Z three times to execute it.
+    </p>
+
+    <div class="slots">
+      <button data-slot="0">
+        SLOT 1: <b>Water Punch</b>
+      </button>
+
+      <button data-slot="1">
+        SLOT 2: <b>Crane Launcher</b>
+      </button>
+
+      <button data-slot="2">
+        SLOT 3: <b>Air Dive</b>
+      </button>
+    </div>
+
+    <p class="small">
+      Click a slot to cycle through unlocked moves.
+    </p>
+
+    <button id="closeLab">CLOSE</button>
+  </div>
+
+  <div id="crosshair">+</div>
+
+  <div id="damageFlash"></div>
+
+  <div id="story" class="hidden">
+    <div class="storybox">
+      <h1 id="storyTitle"></h1>
+      <p id="storyText"></p>
+      <button id="storyNext">CONTINUE</button>
+    </div>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+
+</body>
+</html>
