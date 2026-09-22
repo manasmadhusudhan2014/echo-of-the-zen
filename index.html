@@ -1,95 +1,2393 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>JIN — The Kinetic Current</title>
-  <link rel="stylesheet" href="css/style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Echo of Zen</title>
+
+<style>
+*{box-sizing:border-box}
+
+html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:#080b10;
+    color:#fff;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+canvas{
+    display:block;
+    width:100vw;
+    height:100vh;
+}
+
+/* ================= UI ================= */
+
+#ui{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+}
+
+.panel{
+    background:rgba(8,11,17,.88);
+    border:1px solid rgba(255,255,255,.14);
+    border-radius:14px;
+    box-shadow:0 10px 35px #0009;
+    backdrop-filter:blur(8px);
+}
+
+/* PLAYER PANEL */
+
+#top{
+    position:absolute;
+    left:15px;
+    top:15px;
+    width:290px;
+    padding:14px;
+}
+
+#top h2{
+    margin:0 0 10px;
+    color:#ffd166;
+}
+
+.stat{
+    margin:7px 0;
+}
+
+.bar{
+    height:9px;
+    background:#202630;
+    border-radius:20px;
+    overflow:hidden;
+}
+
+.fill{
+    height:100%;
+    transition:.2s;
+}
+
+.hp{
+    background:#ef476f;
+}
+
+.sta{
+    background:#06d6a0;
+}
+
+.xp{
+    background:#5fa8ff;
+}
+
+/* CLOCK */
+
+#clock{
+    position:absolute;
+    top:15px;
+    left:50%;
+    transform:translateX(-50%);
+    min-width:190px;
+    padding:12px 20px;
+    text-align:center;
+}
+
+#clock strong{
+    font-size:22px;
+    color:#ffd166;
+}
+
+/* ACTION PANEL */
+
+#actions{
+    position:absolute;
+    right:15px;
+    top:15px;
+    width:210px;
+    padding:10px;
+    pointer-events:auto;
+}
+
+button{
+    width:100%;
+    border:0;
+    border-radius:9px;
+    padding:11px;
+    margin:4px 0;
+    color:white;
+    background:#252c38;
+    cursor:pointer;
+    font-weight:bold;
+    transition:.15s;
+}
+
+button:hover{
+    background:#384354;
+    transform:translateY(-1px);
+}
+
+button:active{
+    transform:scale(.98);
+}
+
+/* MESSAGE */
+
+#message{
+    position:absolute;
+    left:50%;
+    bottom:25px;
+    transform:translateX(-50%);
+    min-width:280px;
+    max-width:90vw;
+    padding:12px 20px;
+    text-align:center;
+}
+
+/* QUEST */
+
+#questPanel{
+    position:absolute;
+    left:15px;
+    bottom:15px;
+    width:290px;
+    padding:12px;
+}
+
+/* CONTROLS */
+
+#controls{
+    position:absolute;
+    right:15px;
+    bottom:15px;
+    width:210px;
+    padding:10px;
+    font-size:13px;
+    color:#b8c0cc;
+}
+
+/* MENU */
+
+#menu{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:
+        radial-gradient(circle at 50% 35%,#382515 0%,transparent 35%),
+        linear-gradient(135deg,#080b11,#15100b);
+    pointer-events:auto;
+}
+
+#menuBox{
+    width:min(720px,92vw);
+    padding:40px;
+    text-align:center;
+}
+
+#menuBox h1{
+    margin:0;
+    font-size:clamp(42px,8vw,72px);
+    letter-spacing:7px;
+    color:#ffd166;
+    text-shadow:0 5px 30px #ff9f1c55;
+}
+
+#menuBox h2{
+    letter-spacing:3px;
+    font-weight:normal;
+}
+
+#menuBox p{
+    color:#bdc5d2;
+    line-height:1.6;
+}
+
+.big{
+    font-size:20px;
+    padding:16px;
+    background:#8f551d;
+}
+
+.big:hover{
+    background:#b66b22;
+}
+
+.small{
+    font-size:12px;
+    color:#8993a3!important;
+}
+
+/* INVENTORY */
+
+#inventory{
+    display:none;
+    position:absolute;
+    inset:0;
+    align-items:center;
+    justify-content:center;
+    pointer-events:auto;
+    background:#0006;
+}
+
+#inventoryBox{
+    width:min(650px,92vw);
+    max-height:80vh;
+    overflow:auto;
+    padding:25px;
+}
+
+.item{
+    padding:12px;
+    margin:7px 0;
+    border-radius:8px;
+    background:#171d27;
+}
+
+/* MOBILE */
+
+#touch{
+    display:none;
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+}
+
+.touchBtn{
+    position:absolute;
+    width:62px;
+    height:62px;
+    border-radius:50%;
+    background:#ffffff20;
+    border:1px solid #ffffff45;
+    pointer-events:auto;
+    user-select:none;
+    touch-action:none;
+}
+
+#up{
+    bottom:135px;
+    left:90px;
+}
+
+#left{
+    bottom:70px;
+    left:25px;
+}
+
+#down{
+    bottom:70px;
+    left:90px;
+}
+
+#right{
+    bottom:70px;
+    left:155px;
+}
+
+#attack{
+    right:35px;
+    bottom:85px;
+    background:#d65a3a88;
+}
+
+@media(max-width:800px){
+
+    #top{
+        width:220px;
+        font-size:12px;
+    }
+
+    #actions{
+        width:150px;
+    }
+
+    #questPanel,
+    #controls{
+        display:none;
+    }
+
+    #clock{
+        top:auto;
+        bottom:15px;
+    }
+
+    #touch{
+        display:block;
+    }
+}
+</style>
 </head>
 
 <body>
 
-  <div id="hud">
-    <div class="topbar">
-      <div>
-        <b>JIN</b>
-        <span> SLUM STYLE</span>
-      </div>
-      <div id="objective">Train with Master Shen</div>
+<canvas id="game"></canvas>
+
+<div id="ui">
+
+<!-- ================= PLAYER UI ================= -->
+
+<div id="top" class="panel">
+
+    <h2 id="playerName">Warrior</h2>
+
+    <div>
+        Level <b id="level">1</b>
     </div>
 
-    <div class="bars">
-      <div class="bar">
-        <span>HP</span>
-        <i id="hp"></i>
-      </div>
-
-      <div class="bar">
-        <span>STAMINA</span>
-        <i id="stamina"></i>
-      </div>
-
-      <div class="bar">
-        <span>KINETIC</span>
-        <i id="kinetic"></i>
-      </div>
+    <div class="stat">
+        HP
+        <span id="hpText"></span>
+        <div class="bar">
+            <div id="hpBar" class="fill hp"></div>
+        </div>
     </div>
 
-    <div id="combo">COMBO <b>0</b></div>
-
-    <div id="message">
-      WASD move • Mouse look • Space jump • F dodge • Z/X/C attack
-    </div>
-  </div>
-
-  <div id="controls">
-    <button id="lock">LOCK CAMERA</button>
-    <button id="lab">COMBO LAB</button>
-    <button id="save">SAVE</button>
-  </div>
-
-  <div id="labPanel" class="panel hidden">
-    <h2>🥋 COMBO LAB</h2>
-
-    <p>
-      Build a 3-hit custom combo.
-      Press Z three times to execute it.
-    </p>
-
-    <div class="slots">
-      <button data-slot="0">
-        SLOT 1: <b>Water Punch</b>
-      </button>
-
-      <button data-slot="1">
-        SLOT 2: <b>Crane Launcher</b>
-      </button>
-
-      <button data-slot="2">
-        SLOT 3: <b>Air Dive</b>
-      </button>
+    <div class="stat">
+        Stamina
+        <span id="staText"></span>
+        <div class="bar">
+            <div id="staBar" class="fill sta"></div>
+        </div>
     </div>
 
-    <p class="small">
-      Click a slot to cycle through unlocked moves.
-    </p>
-
-    <button id="closeLab">CLOSE</button>
-  </div>
-
-  <div id="crosshair">+</div>
-
-  <div id="damageFlash"></div>
-
-  <div id="story" class="hidden">
-    <div class="storybox">
-      <h1 id="storyTitle"></h1>
-      <p id="storyText"></p>
-      <button id="storyNext">CONTINUE</button>
+    <div class="stat">
+        XP
+        <span id="xpText"></span>
+        <div class="bar">
+            <div id="xpBar" class="fill xp"></div>
+        </div>
     </div>
-  </div>
 
-  <script type="module" src="js/main.js"></script>
+    <div>
+        💰 Coins:
+        <b id="coins">50</b>
+    </div>
+
+    <div>
+        🥋 Rank:
+        <b id="rank">Novice</b>
+    </div>
+
+</div>
+
+<!-- ================= CLOCK ================= -->
+
+<div id="clock" class="panel">
+
+    Day <b id="day">1</b>
+
+    <br>
+
+    <strong id="time">06:00 AM</strong>
+
+    <br>
+
+    <span id="phase">Morning</span>
+
+</div>
+
+<!-- ================= ACTIONS ================= -->
+
+<div id="actions" class="panel">
+
+    <button onclick="train()">
+        🥋 Train
+    </button>
+
+    <button onclick="eat()">
+        🍜 Eat
+    </button>
+
+    <button onclick="sleep()">
+        😴 Sleep
+    </button>
+
+    <button onclick="attack()">
+        ⚔️ Attack
+    </button>
+
+    <button onclick="toggleInventory()">
+        🎒 Inventory
+    </button>
+
+    <button onclick="saveGame()">
+        💾 Save
+    </button>
+
+    <button onclick="loadGame()">
+        📂 Load
+    </button>
+
+    <button onclick="newDay()">
+        🌅 Next Day
+    </button>
+
+</div>
+
+<!-- ================= QUEST ================= -->
+
+<div id="questPanel" class="panel">
+
+    <b>QUEST</b>
+
+    <div id="questText">
+        Defeat 3 training opponents.
+    </div>
+
+    <div>
+        Progress:
+        <span id="questProgress">0 / 3</span>
+    </div>
+
+</div>
+
+<!-- ================= CONTROLS ================= -->
+
+<div id="controls" class="panel">
+
+    <b>CONTROLS</b>
+    <br><br>
+
+    WASD / Arrow Keys — Move
+    <br>
+    Space — Attack
+    <br>
+    E — Train
+    <br>
+    F — Eat
+    <br>
+    Z — Sleep
+    <br>
+    I — Inventory
+
+</div>
+
+<!-- ================= MESSAGE ================= -->
+
+<div id="message" class="panel">
+    Welcome to Echo of Zen.
+</div>
+
+<!-- ================= INVENTORY ================= -->
+
+<div id="inventory">
+
+    <div id="inventoryBox" class="panel">
+
+        <h2>🎒 Inventory</h2>
+
+        <div id="inventoryItems"></div>
+
+        <button onclick="toggleInventory()">
+            Close
+        </button>
+
+    </div>
+
+</div>
+
+<!-- ================= MAIN MENU ================= -->
+
+<div id="menu">
+
+    <div id="menuBox" class="panel">
+
+        <h1>ECHO OF ZEN</h1>
+
+        <h2>THE PATH OF THE WARRIOR</h2>
+
+        <p>
+            Train your body.
+            Sharpen your mind.
+            Master the martial arts.
+            Discover the path of Zen.
+        </p>
+
+        <button
+            class="big"
+            onclick="startGame()">
+            ENTER THE DOJO
+        </button>
+
+        <p class="small">
+            A browser-based martial arts adventure.
+        </p>
+
+    </div>
+
+</div>
+
+<!-- ================= MOBILE CONTROLS ================= -->
+
+<div id="touch">
+
+    <div id="up" class="touchBtn"></div>
+
+    <div id="left" class="touchBtn"></div>
+
+    <div id="down" class="touchBtn"></div>
+
+    <div id="right" class="touchBtn"></div>
+
+    <div id="attack" class="touchBtn"></div>
+
+</div>
+
+</div>
+
+<script>
+
+/* =========================================================
+   ECHO OF ZEN
+   SINGLE FILE GAME
+========================================================= */
+
+const canvas=document.getElementById("game");
+const ctx=canvas.getContext("2d");
+
+let W=innerWidth;
+let H=innerHeight;
+
+function resize(){
+
+    W=canvas.width=innerWidth;
+    H=canvas.height=innerHeight;
+}
+
+addEventListener("resize",resize);
+
+resize();
+
+/* =========================================================
+   GAME STATE
+========================================================= */
+
+let gameStarted=false;
+
+let player={
+
+    x:500,
+    y:350,
+
+    r:20,
+
+    hp:100,
+    maxHp:100,
+
+    stamina:100,
+    maxStamina:100,
+
+    level:1,
+    xp:0,
+
+    coins:50,
+
+    strength:10,
+    defense:5,
+    speed:3,
+
+    attackCooldown:0,
+
+    food:3,
+
+    name:"Warrior"
+};
+
+let world={
+
+    day:1,
+
+    minutes:360,
+
+    weather:"Clear"
+
+};
+
+let enemies=[];
+
+let particles=[];
+
+let floatingText=[];
+
+let keys={};
+
+let quest={
+
+    kills:0,
+
+    target:3
+
+};
+
+let inventory=[
+
+    {
+        name:"Training Gi",
+        amount:1
+    },
+
+    {
+        name:"Wooden Staff",
+        amount:1
+    },
+
+    {
+        name:"Rice",
+        amount:2
+    }
+
+];
+
+const dojo={
+
+    x:100,
+    y:100,
+
+    w:650,
+    h:430
+
+};
+
+/* =========================================================
+   INPUT
+========================================================= */
+
+addEventListener("keydown",e=>{
+
+    keys[e.key.toLowerCase()]=true;
+
+    if(e.code==="Space")
+        attack();
+
+    if(e.key.toLowerCase()==="e")
+        train();
+
+    if(e.key.toLowerCase()==="f")
+        eat();
+
+    if(e.key.toLowerCase()==="z")
+        sleep();
+
+    if(e.key.toLowerCase()==="i")
+        toggleInventory();
+
+});
+
+addEventListener("keyup",e=>{
+
+    keys[e.key.toLowerCase()]=false;
+
+});
+
+/* =========================================================
+   MOBILE INPUT
+========================================================= */
+
+function touchKey(id,key){
+
+    const el=document.getElementById(id);
+
+    el.addEventListener(
+        "touchstart",
+        e=>{
+            e.preventDefault();
+            keys[key]=true;
+        }
+    );
+
+    el.addEventListener(
+        "touchend",
+        e=>{
+            e.preventDefault();
+            keys[key]=false;
+        }
+    );
+}
+
+touchKey("up","w");
+touchKey("left","a");
+touchKey("down","s");
+touchKey("right","d");
+
+document
+.getElementById("attack")
+.addEventListener(
+    "touchstart",
+    e=>{
+        e.preventDefault();
+        attack();
+    }
+);
+
+/* =========================================================
+   START
+========================================================= */
+
+function startGame(){
+
+    gameStarted=true;
+
+    document.getElementById("menu")
+        .style.display="none";
+
+    showMessage(
+        "Welcome to Echo of Zen, "+player.name+"!"
+    );
+}
+
+/* =========================================================
+   TIME
+========================================================= */
+
+function advanceTime(minutes){
+
+    world.minutes+=minutes;
+
+    while(world.minutes>=1440){
+
+        world.minutes-=1440;
+
+        world.day++;
+
+        player.hp=Math.min(
+            player.maxHp,
+            player.hp+30
+        );
+
+        player.stamina=player.maxStamina;
+
+        showMessage(
+            "Day "+world.day+" begins."
+        );
+    }
+
+    updateUI();
+}
+
+function getTimeString(){
+
+    let h=Math.floor(world.minutes/60);
+
+    let m=Math.floor(world.minutes%60);
+
+    let suffix=h>=12?"PM":"AM";
+
+    let hh=h%12;
+
+    if(hh===0)
+        hh=12;
+
+    return String(hh).padStart(2,"0")
+        +":"
+        +String(m).padStart(2,"0")
+        +" "
+        +suffix;
+}
+
+function getPhase(){
+
+    const h=Math.floor(world.minutes/60);
+
+    if(h<6)
+        return "Night";
+
+    if(h<10)
+        return "Morning";
+
+    if(h<14)
+        return "Training Hours";
+
+    if(h<18)
+        return "Afternoon";
+
+    if(h<22)
+        return "Evening";
+
+    return "Night";
+}
+
+/* =========================================================
+   TRAINING
+========================================================= */
+
+function train(){
+
+    if(!gameStarted)
+        return;
+
+    if(player.stamina<15){
+
+        showMessage(
+            "You are too tired to train."
+        );
+
+        return;
+    }
+
+    player.stamina-=15;
+
+    player.strength+=2;
+
+    player.defense+=1;
+
+    gainXP(12);
+
+    advanceTime(45);
+
+    spawnParticles(
+        player.x,
+        player.y,
+        10
+    );
+
+    showMessage(
+        "Training complete! Strength +2, Defense +1."
+    );
+}
+
+/* =========================================================
+   EATING
+========================================================= */
+
+function eat(){
+
+    if(player.food<=0){
+
+        showMessage(
+            "You have no food."
+        );
+
+        return;
+    }
+
+    player.food--;
+
+    player.hp=Math.min(
+        player.maxHp,
+        player.hp+30
+    );
+
+    player.stamina=Math.min(
+        player.maxStamina,
+        player.stamina+25
+    );
+
+    advanceTime(30);
+
+    showMessage(
+        "You ate a meal and recovered."
+    );
+}
+
+/* =========================================================
+   SLEEP
+========================================================= */
+
+function sleep(){
+
+    if(!gameStarted)
+        return;
+
+    let hour=Math.floor(
+        world.minutes/60
+    );
+
+    if(hour<20 && hour>=6){
+
+        showMessage(
+            "It isn't bedtime yet."
+        );
+
+        return;
+    }
+
+    player.hp=player.maxHp;
+
+    player.stamina=player.maxStamina;
+
+    advanceTime(480);
+
+    showMessage(
+        "You slept. Body and mind restored."
+    );
+}
+
+/* =========================================================
+   NEW DAY
+========================================================= */
+
+function newDay(){
+
+    world.minutes=360;
+
+    world.day++;
+
+    player.hp=player.maxHp;
+
+    player.stamina=player.maxStamina;
+
+    showMessage(
+        "Day "+world.day+
+        " begins at sunrise."
+    );
+}
+
+/* =========================================================
+   COMBAT
+========================================================= */
+
+function attack(){
+
+    if(!gameStarted)
+        return;
+
+    if(player.attackCooldown>0)
+        return;
+
+    if(player.stamina<5){
+
+        showMessage(
+            "Not enough stamina."
+        );
+
+        return;
+    }
+
+    player.stamina-=5;
+
+    player.attackCooldown=.35;
+
+    let hit=false;
+
+    for(
+        let i=enemies.length-1;
+        i>=0;
+        i--
+    ){
+
+        const e=enemies[i];
+
+        const dx=e.x-player.x;
+
+        const dy=e.y-player.y;
+
+        const dist=Math.hypot(dx,dy);
+
+        if(dist<70){
+
+            let damage=
+                player.strength+
+                Math.floor(
+                    Math.random()*6
+                );
+
+            e.hp-=damage;
+
+            floatingText.push({
+
+                x:e.x,
+
+                y:e.y-30,
+
+                text:"-"+damage,
+
+                life:1
+
+            });
+
+            spawnParticles(
+                e.x,
+                e.y,
+                5
+            );
+
+            hit=true;
+
+            if(e.hp<=0){
+
+                enemies.splice(i,1);
+
+                player.coins+=10;
+
+                gainXP(25);
+
+                quest.kills++;
+
+                if(
+                    quest.kills>=
+                    quest.target
+                ){
+
+                    player.coins+=100;
+
+                    gainXP(50);
+
+                    showMessage(
+                        "QUEST COMPLETE! +100 coins"
+                    );
+
+                    quest.kills=0;
+
+                    quest.target+=2;
+
+                }else{
+
+                    showMessage(
+                        "Opponent defeated! +10 coins"
+                    );
+                }
+            }
+
+            break;
+        }
+    }
+
+    if(!hit){
+
+        spawnParticles(
+
+            player.x+
+            Math.random()*30-15,
+
+            player.y+
+            Math.random()*30-15,
+
+            3
+
+        );
+    }
+}
+
+/* =========================================================
+   XP
+========================================================= */
+
+function xpNeeded(){
+
+    return 100+
+        player.level*25;
+}
+
+function gainXP(amount){
+
+    player.xp+=amount;
+
+    while(
+        player.xp>=xpNeeded()
+    ){
+
+        player.xp-=xpNeeded();
+
+        player.level++;
+
+        player.maxHp+=5;
+
+        player.maxStamina+=3;
+
+        player.hp=player.maxHp;
+
+        player.stamina=
+            player.maxStamina;
+
+        showMessage(
+            "LEVEL UP! Level "+
+            player.level
+        );
+    }
+}
+
+/* =========================================================
+   RANK
+========================================================= */
+
+function getRank(){
+
+    if(player.level>=50)
+        return "Master";
+
+    if(player.level>=30)
+        return "Grandmaster";
+
+    if(player.level>=20)
+        return "Elite";
+
+    if(player.level>=10)
+        return "Warrior";
+
+    if(player.level>=5)
+        return "Fighter";
+
+    return "Novice";
+}
+
+/* =========================================================
+   ENEMY SPAWN
+========================================================= */
+
+function spawnEnemy(){
+
+    const types=[
+
+        {
+            name:"Training Dummy",
+            hp:40,
+            speed:.5,
+            color:"#b98258"
+        },
+
+        {
+            name:"Rival",
+            hp:70,
+            speed:.8,
+            color:"#8d6aa8"
+        },
+
+        {
+            name:"Dojo Fighter",
+            hp:110,
+            speed:1,
+            color:"#3e9b9b"
+        }
+
+    ];
+
+    const difficulty=Math.min(
+
+        types.length-1,
+
+        Math.floor(player.level/5)
+
+    );
+
+    const type=types[difficulty];
+
+    const side=
+        Math.floor(Math.random()*4);
+
+    let x,y;
+
+    if(side===0){
+
+        x=dojo.x+
+          Math.random()*dojo.w;
+
+        y=dojo.y-30;
+
+    }else if(side===1){
+
+        x=dojo.x+
+          dojo.w+
+          30;
+
+        y=dojo.y+
+          Math.random()*dojo.h;
+
+    }else if(side===2){
+
+        x=dojo.x+
+          Math.random()*dojo.w;
+
+        y=dojo.y+
+          dojo.h+
+          30;
+
+    }else{
+
+        x=dojo.x-30;
+
+        y=dojo.y+
+          Math.random()*dojo.h;
+    }
+
+    enemies.push({
+
+        x:x,
+
+        y:y,
+
+        r:18,
+
+        hp:type.hp,
+
+        maxHp:type.hp,
+
+        speed:type.speed,
+
+        color:type.color,
+
+        name:type.name,
+
+        attackTimer:0
+
+    });
+}
+
+/* =========================================================
+   UPDATE
+========================================================= */
+
+function update(dt){
+
+    if(!gameStarted)
+        return;
+
+    let dx=0;
+
+    let dy=0;
+
+    if(
+        keys["w"]||
+        keys["arrowup"]
+    )
+        dy--;
+
+    if(
+        keys["s"]||
+        keys["arrowdown"]
+    )
+        dy++;
+
+    if(
+        keys["a"]||
+        keys["arrowleft"]
+    )
+        dx--;
+
+    if(
+        keys["d"]||
+        keys["arrowright"]
+    )
+        dx++;
+
+    if(dx||dy){
+
+        const len=Math.hypot(
+            dx,
+            dy
+        );
+
+        dx/=len;
+
+        dy/=len;
+
+        player.x+=
+            dx*player.speed;
+
+        player.y+=
+            dy*player.speed;
+
+        player.stamina=Math.max(
+
+            0,
+
+            player.stamina-
+            dt*2
+
+        );
+
+    }else{
+
+        player.stamina=Math.min(
+
+            player.maxStamina,
+
+            player.stamina+
+            dt*5
+
+        );
+    }
+
+    /* boundaries */
+
+    player.x=Math.max(
+        35,
+        Math.min(
+            W-35,
+            player.x
+        )
+    );
+
+    player.y=Math.max(
+        35,
+        Math.min(
+            H-35,
+            player.y
+        )
+    );
+
+    /* attack cooldown */
+
+    if(player.attackCooldown>0)
+        player.attackCooldown-=dt;
+
+    /* enemies */
+
+    for(const e of enemies){
+
+        let dx=
+            player.x-e.x;
+
+        let dy=
+            player.y-e.y;
+
+        let dist=
+            Math.hypot(dx,dy);
+
+        if(dist>35){
+
+            e.x+=
+                (dx/dist)*
+                e.speed;
+
+            e.y+=
+                (dy/dist)*
+                e.speed;
+
+        }else{
+
+            e.attackTimer-=dt;
+
+            if(e.attackTimer<=0){
+
+                e.attackTimer=1.3;
+
+                const damage=Math.max(
+
+                    1,
+
+                    Math.floor(
+                        5-
+                        player.defense*.2
+                    )
+
+                );
+
+                player.hp-=damage;
+
+                floatingText.push({
+
+                    x:player.x,
+
+                    y:player.y-35,
+
+                    text:"-"+damage,
+
+                    life:1
+
+                });
+
+                if(player.hp<=0){
+
+                    player.hp=1;
+
+                    player.x=500;
+
+                    player.y=350;
+
+                    showMessage(
+                        "Defeated! You return to the dojo."
+                    );
+                }
+            }
+        }
+    }
+
+    /* spawn enemies */
+
+    let desired=Math.min(
+
+        6,
+
+        2+
+        Math.floor(player.level/10)
+
+    );
+
+    while(
+        enemies.length<desired
+    ){
+
+        spawnEnemy();
+    }
+
+    /* particles */
+
+    for(
+        let i=particles.length-1;
+        i>=0;
+        i--
+    ){
+
+        const p=particles[i];
+
+        p.x+=p.vx;
+
+        p.y+=p.vy;
+
+        p.life-=dt;
+
+        if(p.life<=0)
+            particles.splice(i,1);
+    }
+
+    /* floating text */
+
+    for(
+        let i=floatingText.length-1;
+        i>=0;
+        i--
+    ){
+
+        const f=floatingText[i];
+
+        f.y-=30*dt;
+
+        f.life-=dt;
+
+        if(f.life<=0)
+            floatingText.splice(i,1);
+    }
+
+    advanceTime(dt*2);
+}
+
+/* =========================================================
+   DRAW
+========================================================= */
+
+function draw(){
+
+    ctx.clearRect(
+        0,
+        0,
+        W,
+        H
+    );
+
+    /* background */
+
+    const grad=
+        ctx.createLinearGradient(
+            0,
+            0,
+            0,
+            H
+        );
+
+    grad.addColorStop(
+        0,
+        "#151d2b"
+    );
+
+    grad.addColorStop(
+        1,
+        "#090b10"
+    );
+
+    ctx.fillStyle=grad;
+
+    ctx.fillRect(
+        0,
+        0,
+        W,
+        H
+    );
+
+    drawEnvironment();
+
+    drawEnemies();
+
+    drawPlayer();
+
+    drawParticles();
+
+    drawFloatingText();
+}
+
+/* =========================================================
+   ENVIRONMENT
+========================================================= */
+
+function drawEnvironment(){
+
+    /* floor */
+
+    ctx.fillStyle="#222b30";
+
+    ctx.fillRect(
+
+        dojo.x,
+
+        dojo.y,
+
+        dojo.w,
+
+        dojo.h
+
+    );
+
+    /* floor tiles */
+
+    ctx.strokeStyle="#303a40";
+
+    ctx.lineWidth=1;
+
+    for(
+        let x=dojo.x;
+        x<dojo.x+dojo.w;
+        x+=40
+    ){
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            x,
+            dojo.y
+        );
+
+        ctx.lineTo(
+            x,
+            dojo.y+dojo.h
+        );
+
+        ctx.stroke();
+    }
+
+    for(
+        let y=dojo.y;
+        y<dojo.y+dojo.h;
+        y+=40
+    ){
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            dojo.x,
+            y
+        );
+
+        ctx.lineTo(
+            dojo.x+dojo.w,
+            y
+        );
+
+        ctx.stroke();
+    }
+
+    /* roof */
+
+    ctx.fillStyle="#5a2525";
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        dojo.x-20,
+        dojo.y
+    );
+
+    ctx.lineTo(
+        dojo.x+
+        dojo.w/2,
+        dojo.y-90
+    );
+
+    ctx.lineTo(
+        dojo.x+
+        dojo.w+20,
+        dojo.y
+    );
+
+    ctx.closePath();
+
+    ctx.fill();
+
+    /* pillars */
+
+    ctx.fillStyle="#8b5a35";
+
+    ctx.fillRect(
+
+        dojo.x+30,
+
+        dojo.y+30,
+
+        20,
+
+        dojo.h-60
+
+    );
+
+    ctx.fillRect(
+
+        dojo.x+
+        dojo.w-50,
+
+        dojo.y+30,
+
+        20,
+
+        dojo.h-60
+
+    );
+
+    /* mats */
+
+    for(let i=0;i<4;i++){
+
+        ctx.fillStyle=
+            i%2===0
+            ?" #52614c"
+            :"#4c5948";
+
+        ctx.fillRect(
+
+            dojo.x+
+            120+
+            i*120,
+
+            dojo.y+150,
+
+            100,
+
+            55
+
+        );
+    }
+
+    /* shrine */
+
+    ctx.fillStyle="#181313";
+
+    ctx.fillRect(
+
+        dojo.x+
+        dojo.w/2-
+        45,
+
+        dojo.y+20,
+
+        90,
+
+        65
+
+    );
+
+    ctx.fillStyle="#ffd166";
+
+    ctx.fillRect(
+
+        dojo.x+
+        dojo.w/2-
+        8,
+
+        dojo.y+35,
+
+        16,
+
+        30
+
+    );
+
+    ctx.fillStyle="#f5f0df";
+
+    ctx.font="bold 12px Arial";
+
+    ctx.textAlign="center";
+
+    ctx.fillText(
+
+        "ECHO OF ZEN",
+
+        dojo.x+
+        dojo.w/2,
+
+        dojo.y+55
+
+    );
+}
+
+/* =========================================================
+   PLAYER
+========================================================= */
+
+function drawPlayer(){
+
+    ctx.save();
+
+    ctx.translate(
+        player.x,
+        player.y
+    );
+
+    /* shadow */
+
+    ctx.fillStyle="#0008";
+
+    ctx.beginPath();
+
+    ctx.ellipse(
+        0,
+        15,
+        25,
+        9,
+        0,
+        0,
+        Math.PI*2
+    );
+
+    ctx.fill();
+
+    /* head */
+
+    ctx.fillStyle="#f0e4d2";
+
+    ctx.beginPath();
+
+    ctx.arc(
+        0,
+        -8,
+        14,
+        0,
+        Math.PI*2
+    );
+
+    ctx.fill();
+
+    /* hair */
+
+    ctx.fillStyle="#18151a";
+
+    ctx.beginPath();
+
+    ctx.arc(
+        0,
+        -14,
+        15,
+        Math.PI,
+        Math.PI*2
+    );
+
+    ctx.fill();
+
+    /* gi */
+
+    ctx.fillStyle="#eee";
+
+    ctx.fillRect(
+        -13,
+        4,
+        26,
+        25
+    );
+
+    /* belt */
+
+    ctx.fillStyle="#b87a35";
+
+    ctx.fillRect(
+        -14,
+        19,
+        28,
+        5
+    );
+
+    /* legs */
+
+    ctx.fillStyle="#242833";
+
+    ctx.fillRect(
+        -11,
+        28,
+        8,
+        18
+    );
+
+    ctx.fillRect(
+        3,
+        28,
+        8,
+        18
+    );
+
+    /* staff */
+
+    ctx.strokeStyle="#c99b55";
+
+    ctx.lineWidth=5;
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        12,
+        10
+    );
+
+    ctx.lineTo(
+        35,
+        -10
+    );
+
+    ctx.stroke();
+
+    ctx.restore();
+}
+
+/* =========================================================
+   ENEMIES
+========================================================= */
+
+function drawEnemies(){
+
+    for(const e of enemies){
+
+        ctx.save();
+
+        ctx.translate(
+            e.x,
+            e.y
+        );
+
+        /* shadow */
+
+        ctx.fillStyle="#0008";
+
+        ctx.beginPath();
+
+        ctx.ellipse(
+            0,
+            17,
+            22,
+            7,
+            0,
+            0,
+            Math.PI*2
+        );
+
+        ctx.fill();
+
+        /* body */
+
+        ctx.fillStyle=e.color;
+
+        ctx.beginPath();
+
+        ctx.arc(
+            0,
+            0,
+            e.r,
+            0,
+            Math.PI*2
+        );
+
+        ctx.fill();
+
+        /* head */
+
+        ctx.fillStyle="#e6c5a4";
+
+        ctx.beginPath();
+
+        ctx.arc(
+            0,
+            -20,
+            11,
+            0,
+            Math.PI*2
+        );
+
+        ctx.fill();
+
+        /* belt */
+
+        ctx.fillStyle="#171717";
+
+        ctx.fillRect(
+            -15,
+            5,
+            30,
+            5
+        );
+
+        /* HP background */
+
+        ctx.fillStyle="#111";
+
+        ctx.fillRect(
+            -20,
+            -38,
+            40,
+            5
+        );
+
+        /* HP */
+
+        ctx.fillStyle="#e84d5b";
+
+        ctx.fillRect(
+
+            -20,
+
+            -38,
+
+            40*
+            Math.max(
+                0,
+                e.hp/e.maxHp
+            ),
+
+            5
+
+        );
+
+        ctx.restore();
+    }
+}
+
+/* =========================================================
+   PARTICLES
+========================================================= */
+
+function spawnParticles(
+    x,
+    y,
+    count
+){
+
+    for(
+        let i=0;
+        i<count;
+        i++
+    ){
+
+        const angle=
+            Math.random()*
+            Math.PI*2;
+
+        const speed=
+            Math.random()*3+1;
+
+        particles.push({
+
+            x:x,
+
+            y:y,
+
+            vx:
+                Math.cos(angle)*
+                speed,
+
+            vy:
+                Math.sin(angle)*
+                speed,
+
+            life:
+                .5+
+                Math.random()*.5,
+
+            size:
+                2+
+                Math.random()*3,
+
+            color:"#ffd166"
+
+        });
+    }
+}
+
+/* =========================================================
+   DRAW PARTICLES
+========================================================= */
+
+function drawParticles(){
+
+    for(const p of particles){
+
+        ctx.globalAlpha=
+            Math.max(
+                0,
+                p.life
+            );
+
+        ctx.fillStyle=
+            p.color||"#ffd166";
+
+        ctx.beginPath();
+
+        ctx.arc(
+            p.x,
+            p.y,
+            p.size||3,
+            0,
+            Math.PI*2
+        );
+
+        ctx.fill();
+    }
+
+    ctx.globalAlpha=1;
+}
+
+/* =========================================================
+   FLOATING DAMAGE
+========================================================= */
+
+function drawFloatingText(){
+
+    ctx.font=
+        "bold 16px Arial";
+
+    ctx.textAlign="center";
+
+    for(const f of floatingText){
+
+        ctx.globalAlpha=f.life;
+
+        ctx.fillStyle="#ff6b6b";
+
+        ctx.fillText(
+            f.text,
+            f.x,
+            f.y
+        );
+    }
+
+    ctx.globalAlpha=1;
+}
+
+/* =========================================================
+   UI
+========================================================= */
+
+function updateUI(){
+
+    document.getElementById(
+        "level"
+    ).textContent=
+        player.level;
+
+    document.getElementById(
+        "coins"
+    ).textContent=
+        player.coins;
+
+    document.getElementById(
+        "rank"
+    ).textContent=
+        getRank();
+
+    document.getElementById(
+        "hpText"
+    ).textContent=
+        Math.floor(player.hp)+
+        "/"+
+        player.maxHp;
+
+    document.getElementById(
+        "staText"
+    ).textContent=
+        Math.floor(player.stamina)+
+        "/"+
+        player.maxStamina;
+
+    document.getElementById(
+        "xpText"
+    ).textContent=
+        Math.floor(player.xp)+
+        "/"+
+        xpNeeded();
+
+    document.getElementById(
+        "hpBar"
+    ).style.width=
+        (
+            player.hp/
+            player.maxHp*
+            100
+        )+"%";
+
+    document.getElementById(
+        "staBar"
+    ).style.width=
+        (
+            player.stamina/
+            player.maxStamina*
+            100
+        )+"%";
+
+    document.getElementById(
+        "xpBar"
+    ).style.width=
+        (
+            player.xp/
+            xpNeeded()*
+            100
+        )+"%";
+
+    document.getElementById(
+        "day"
+    ).textContent=
+        world.day;
+
+    document.getElementById(
+        "time"
+    ).textContent=
+        getTimeString();
+
+    document.getElementById(
+        "phase"
+    ).textContent=
+        getPhase();
+
+    document.getElementById(
+        "questProgress"
+    ).textContent=
+        quest.kills+
+        " / "+
+        quest.target;
+
+}
+
+/* =========================================================
+   MESSAGES
+========================================================= */
+
+let messageTimer=0;
+
+function showMessage(msg){
+
+    document.getElementById(
+        "message"
+    ).textContent=msg;
+
+    messageTimer=4;
+}
+
+/* =========================================================
+   INVENTORY
+========================================================= */
+
+function toggleInventory(){
+
+    const el=
+        document.getElementById(
+            "inventory"
+        );
+
+    if(
+        el.style.display==="flex"
+    ){
+
+        el.style.display="none";
+
+    }else{
+
+        updateInventory();
+
+        el.style.display="flex";
+    }
+}
+
+function updateInventory(){
+
+    const box=
+        document.getElementById(
+            "inventoryItems"
+        );
+
+    box.innerHTML="";
+
+    inventory.forEach(
+        item=>{
+
+            const div=
+                document.createElement(
+                    "div"
+                );
+
+            div.className="item";
+
+            div.innerHTML=
+                "<b>"+
+                item.name+
+                "</b> × "+
+                item.amount;
+
+            box.appendChild(div);
+        }
+    );
+
+    const food=
+        document.createElement(
+            "div"
+        );
+
+    food.className="item";
+
+    food.innerHTML=
+        "🍜 Food × "+
+        player.food;
+
+    box.appendChild(food);
+}
+
+/* =========================================================
+   SAVE
+========================================================= */
+
+function saveGame(){
+
+    const data={
+
+        player:player,
+
+        world:world,
+
+        quest:quest,
+
+        inventory:inventory
+
+    };
+
+    localStorage.setItem(
+
+        "echoOfZenSave",
+
+        JSON.stringify(data)
+
+    );
+
+    showMessage(
+        "Echo of Zen saved."
+    );
+}
+
+/* =========================================================
+   LOAD
+========================================================= */
+
+function loadGame(){
+
+    const raw=
+        localStorage.getItem(
+            "echoOfZenSave"
+        );
+
+    if(!raw){
+
+        showMessage(
+            "No Echo of Zen save found."
+        );
+
+        return;
+    }
+
+    try{
+
+        const data=
+            JSON.parse(raw);
+
+        player=data.player;
+
+        world=data.world;
+
+        quest=data.quest;
+
+        inventory=data.inventory;
+
+        showMessage(
+            "Echo of Zen loaded."
+        );
+
+    }catch(error){
+
+        showMessage(
+            "Save file could not be loaded."
+        );
+    }
+}
+
+/* =========================================================
+   GAME LOOP
+========================================================= */
+
+let last=
+    performance.now();
+
+function loop(now){
+
+    const dt=
+        Math.min(
+            .05,
+            (now-last)/1000
+        );
+
+    last=now;
+
+    update(dt);
+
+    draw();
+
+    updateUI();
+
+    if(messageTimer>0){
+
+        messageTimer-=dt;
+
+        if(messageTimer<=0){
+
+            document.getElementById(
+                "message"
+            ).textContent="";
+        }
+    }
+
+    requestAnimationFrame(loop);
+}
+
+requestAnimationFrame(loop);
+
+/* =========================================================
+   AUTO SAVE
+========================================================= */
+
+setInterval(()=>{
+
+    if(gameStarted){
+
+        const data={
+
+            player:player,
+
+            world:world,
+
+            quest:quest,
+
+            inventory:inventory
+
+        };
+
+        localStorage.setItem(
+
+            "echoOfZenSave",
+
+            JSON.stringify(data)
+
+        );
+    }
+
+},30000);
+
+/* =========================================================
+   INITIAL UI
+========================================================= */
+
+updateUI();
+
+</script>
 
 </body>
 </html>
